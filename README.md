@@ -1,2 +1,2 @@
 # contacts
-Create vcf from site db
+Create vcf from joomla site db (mysql)

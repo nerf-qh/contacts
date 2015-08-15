@@ -55,3 +55,10 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#eclipse
+.settings/
+.project
+.pydevproject
+
+config.ini
