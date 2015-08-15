@@ -144,7 +144,7 @@ def main():
 
     logging.debug('Start creat contacts')
     
-    configPath = dir_path + 'config.ini'
+    configPath = dir_path + '/config.ini'
     config = configparser.ConfigParser()
 
     if os.path.exists(configPath):
