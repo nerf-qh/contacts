@@ -93,7 +93,7 @@ def create_vCard(files_dir, serv, data):
             resize(tmp_img)
             f.write('PHOTO;ENCODING=b;TYPE=JPEG:' + str(base64.b64encode(open(tmp_img, 'rb').read()))[2:-1] + '\n')
 
-    f.write('ORG:ЕКТ\n END:VCARD\n')
+    f.write('ORG:ЕКТ\nEND:VCARD\n')
     f.close()
     
 
