@@ -53,6 +53,13 @@ class connector():
         conn.close() 
         return data
 
+
+def create_vCards(db_conn, files_dir, serv):
+    data = db_conn.getContacts()
+    for r in data:
+        create_vCard(files_dir, serv, r)
+
+
 def create_vCard(files_dir, serv, data):
     logging.info('Create ' + data[2])
     tmp_img = files_dir + 'tmp.jpg'
@@ -89,6 +96,7 @@ def create_vCard(files_dir, serv, data):
     f.write('ORG:ЕКТ\n END:VCARD\n')
     f.close()
     
+
 def write_to_file(fpath, what):
     try:
         handle = open(fpath,"a")
@@ -105,13 +113,6 @@ def del_old_files(files_dir):
     filelist = glob.glob(files_dir + "all/*.vcf")
     for f in filelist:
         os.remove(f)
-
-
-def create_vCards(db_conn, files_dir, serv):
-    data = db_conn.getContacts()
-    for r in data:
-        create_vCard(files_dir, serv, r)
-
 
 def merge_files(files_dir):
     if not os.path.exists(files_dir + 'all/'):
@@ -157,7 +158,7 @@ def main():
     
     db_conn = connector(config)
     files_dir = config.get('files', 'dir', fallback='./vcf/')
-    serv = config.get('site', 'adr', fallback='')
+    serv = config.get('site', 'host', fallback='')
    
     del_old_files(files_dir)
     create_vCards(db_conn, files_dir, serv)
