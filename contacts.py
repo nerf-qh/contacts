@@ -108,7 +108,7 @@ def del_old_files(files_dir):
 
 
 def create_vCards(db_conn, files_dir, serv):
-    data = db_conn.getData()
+    data = db_conn.getContacts()
     for r in data:
         create_vCard(files_dir, serv, r)
 
