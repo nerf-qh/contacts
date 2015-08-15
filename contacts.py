@@ -55,6 +55,7 @@ class connector():
 
 def create_vCard(files_dir, serv, data):
     logging.info('Create ' + data[2])
+    tmp_img = files_dir + 'tmp.jpg'
     
     file_name = files_dir + data[0] + ".vcf"   
     f = open(file_name, 'w')
@@ -97,8 +98,40 @@ def write_to_file(fpath, what):
     handle.write(what)
     handle.close()
 
+def del_old_files(files_dir):
+    filelist = glob.glob(files_dir + "*.*")
+    for f in filelist:
+        os.remove(f)
+    filelist = glob.glob(files_dir + "all/*.vcf")
+    for f in filelist:
+        os.remove(f)
 
 
+def create_vCards(db_conn, files_dir, serv):
+    data = db_conn.getData()
+    for r in data:
+        create_vCard(files_dir, serv, r)
+
+
+def merge_files(files_dir):
+    if not os.path.exists(files_dir + 'all/'):
+        try:
+            os.makedirs(files_dir + 'all/')
+        except OSError:
+            logging.critical(OSError)
+            sys.exit(0)
+ 
+    nom_file = 0
+    for line in glob.glob(files_dir + '*.vcf'):
+        tmp_path = files_dir + 'all/all_' + str(nom_file).zfill(2) + '.vcf'
+        if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 8000000:
+            nom_file += 1
+            tmp_path = files_dir + 'all/all_' + str(nom_file).zfill(2) + '.vcf'
+            
+        f = open(tmp_path, 'a')
+        for content in open(line, "r"):
+            f.write(content)
+        f.close()    
 
 def main():
     dir_path = os.path.dirname(sys.argv[0])
@@ -122,46 +155,14 @@ def main():
         logging.critical('Config not exists:%s' % configPath)
         return
     
-    files_dir = os.path.dirname(sys.argv[0]) + '/vcf/'
-    global tmp_img 
-    tmp_img = files_dir + "temp.jpg"
-    
-    filelist = glob.glob(files_dir + "*.*")
-    for f in filelist:
-        os.remove(f)
-    filelist = glob.glob(files_dir + "all/*.vcf")
-    for f in filelist:
-        os.remove(f)
-
     db_conn = connector(config)
-    data = db_conn.getData()
+    files_dir = config.get('files', 'dir', fallback='./vcf/')
     serv = config.get('site', 'adr', fallback='')
-    for r in data:
-        create_vCard(files_dir, serv, r)
+   
+    del_old_files(files_dir)
+    create_vCards(db_conn, files_dir, serv)
+    merge_files(files_dir)
     
-    if not os.path.exists(files_dir + 'all/'):
-        try:
-            os.makedirs(files_dir + 'all/')
-        except OSError:
-            sys.exit(0)
-            print(OSError)
- 
-    nom_file = 0
-    for line in glob.glob(files_dir + '*.vcf'):
-        tmp_path = files_dir + 'all/all_' + str(nom_file).zfill(2) + '.vcf'
-        if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 8000000:
-            nom_file += 1
-            tmp_path = files_dir + 'all/all_' + str(nom_file).zfill(2) + '.vcf'
-            
-        f = open(tmp_path, 'a')
-        for content in open(line, "r"):
-            f.write(content)
-        f.close()
-    
-    try:
-        os.remove(files_dir + 'temp.jpg')
-    except:
-        logging.warn('Error: can not delete file (%s)' % (files_dir + 'all.vcf'))   
     logging.info('End generation vCard')
 
 if __name__ == '__main__':
