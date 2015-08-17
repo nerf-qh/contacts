@@ -71,7 +71,7 @@ def create_vCard(files_dir, serv, data):
     f.write('FN:' + fio[0] + ' ' + fio[1] + '\n')
     f.write('N:' + fio[0] + ';' + fio[1] + ';;;\n')
     if data[9]:
-        f.write('EMAIL;TYPE=INTERNET;TYPE=WORK:' + data[9] + '\n')
+        f.write('EMAIL;TYPE=WORK:' + data[9] + '\n')
     
     f.write('TEL;TYPE=CELL:' + data[10] + '\n')
     f.write('BDAY:' + str(data[11]).replace(' 00:00:00','') + '\n')
@@ -79,7 +79,7 @@ def create_vCard(files_dir, serv, data):
     for nom in tel:
         f.write('TEL;TYPE=WORK:' + nom.strip() + '\n')
     f.write('TITLE:' + data[3] + '\n')
-    note = data[7].replace('\r\n', '\\r\\n').replace('\n', '\\n').replace('<p>','').replace('</p>','')
+    note = data[7].replace('\r\n', '\\n').replace('\n', '\\n').replace('<p>','').replace('</p>','')
     f.write('NOTE:' + data[6] + '\\n' + note + '\n')
     if len(data[4]) > 0:
         f.write('ADR;TYPE=HOME:;;;' + data[4] + ';;;\n')
