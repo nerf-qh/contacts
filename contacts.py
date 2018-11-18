@@ -4,9 +4,6 @@
 '''
 Created on 24 июня 2013 г.
 
-@author: shkalar
-
-Copyright 2013 Aleh Krautsou
 Licensed under the Apache License, Version 2.0
 
 '''
